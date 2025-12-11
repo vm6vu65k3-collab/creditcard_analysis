@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分析儀表板</title>
+    <link rel = "stylesheet" href = "/static/style.css?v={{ version }}">
+</head>
+<body>
+    <a href = "/">回上頁</a>
+    <h1>分析儀表板</h1>
+    <div>
+        <div class = "form-row">
+            <label for = "industry_select">趨勢圖 - 產業篩選：</label>
+            <select id = "industry_select"></select><br/>
+        </div>
+        <div class = "form-row">
+            <label for = "age_level_select">年齡層：</label>
+            <select id = "age_level_select"></select><br/>
+        </div>
+        <div class = "form-row">
+            <label for = "start_month">起始月：</label>
+            <select id = "start_month"></select>
+        </div>
+        <div class = "form-row">
+            <label for = "end_month">結束月：</label>
+            <select id = "end_month"></select><br/>
+        </div>
+        <button id = "apply_filter" class = "btn">套用</button>
+    </div>
+    <div class="chart-row">
+        <div id = "trend_chart" class="chart-box"></div>
+        <div id = "topn_chart" class="chart-box"></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src = "{{ url_for('static', path='utils.js')}}" defer></script>
+    <script src = "{{ url_for('static', path='dashboard_draw.js')}}" defer></script>
+    <script src = "{{ url_for('static', path='dashboard.js')}}" defer></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>資料視覺化分析</title>
+    <link rel = "stylesheet" href = "/static/style.css?v={{ version }}">
+</head>
+<body>
+    <h1>信用卡消費分析主選單</h1>
+    <div>
+        <button id = "btn_generate1" data-analysis="1" class = "ana_btn">熱門分析1</button>
+        <button id = "btn_generate2" data-analysis="2" class = "ana_btn">熱門分析2</button>
+    </div><br/>
+    <div><a href="/dashboard">分析儀表板</a></div><br/>
+    <div><a href="/bar">長條圖</a></div><br/>
+    <div><a href="/line">折線圖</a></div><br/>
+    <div><a href="/pie">圓餅圖</a></div><br/>
+    <div><a href="/heatmap">熱力圖</a></div><br/>
+    <hr>
+    <div id = "board" style = "width: 600px; height: 750px"></div>
+    <script src ="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src = "{{ url_for('static', path='draw.js')}}" defer></script>
+    <script src = "{{ url_for('static', path='utils.js')}}" defer></script>
+    <script src = "{{ url_for('static', path='index.js')}}" defer></script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>折線圖表分析</title>
+    <link rel = "stylesheet" href = "/static/style.css?v = {{ version }}">
+</head>
+<body>
+    <div>
+        <a href = "/">回上頁</a>
+        <h1>折線圖表參數</h1>
+        <div class = "form-row">
+            <label for = "create_by">員工編號：</label>
+            <input type = "number" id = "create_by" placeholder = "請輸入員工編號">
+        </div>
+        <div class = "form-row">
+            <label for = "start_month">起始月：</label>
+            <select id = "start_month"></select><br/>
+        </div>
+        <div class = "form-row">
+            <label for = "end_month">結束月：</label>
+            <select id  = "end_month"></select><br/>
+        </div>
+        <div class = "form-row">
+            <label for = "x_axis">X 軸：</label>
+            <select id = "x_axis"></select><br/> 
+        </div>
+        <div class = "form-row">
+            <label for = "value">Y 軸：</label>
+            <select id = "value"></select><br/>
+        </div>
+        <div class = "form-row">
+            <label for = "set_title">圖表標題：</label>
+            <input id = "set_title" placeholder = "請輸入圖表標題"><br/>
+        </div>
+        <button id  = "btn_generate" class = "btn">新增圖表</button>
+        <button id = "btn_download_img" class = "btn">下載圖表</button>
+        <hr>
+        <div id = "board" style = "width: 650px; height: 450px;"></div>
+    </div>
+    <script src = "https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src = "{{ url_for('static', path='draw.js')}}" defer></script>
+    <script src = "{{ url_for('static', path='utils.js' )}}" defer></script>
+    <script src = "{{ url_for('static', path='line.js')}}" defer></script>
+</body>
+</html>

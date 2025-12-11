@@ -1,0 +1,80 @@
+/* 下拉選框樣式 */
+select.is_placeholder { color: #9aa0a6; }
+
+select option[value = ""] { color: #9aa0a6; }
+
+/* 按鈕樣式 */
+.btn {
+    display: inline-block;
+    padding: 5px 5px;
+    background:#1c77d8;
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+    border-radius: 5px;
+}
+.btn:hover{
+    background: #0056b3;
+}
+
+.ana_btn{
+    display: inline-block;
+    padding: 5px 5px;
+    background:#1c77d8;
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+    border-radius: 5px;
+}
+.ana_btn:hover{
+    background: #0056b3;
+}
+
+/* 選擇框樣式 */
+.form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.form-row label {
+    display: inline-block;
+    text-align: justify;
+    /* width: 100px; */
+}
+.form-row select {
+    width: 80px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+/* echart樣式 */
+#board img.chart-img {
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+
+.chart-row {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    align-items: stretch;
+}
+
+.chart-box {
+    flex: 1;
+    min-width: 0;
+    height: 400px;
+
+}
+
+@media (max-width: 768px) {
+    .chart-row {
+        flex-direction: column;
+    }
+
+    .chart-box {
+        width: 100%;
+        height: 320px;
+    }
+}
