@@ -2,6 +2,11 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+echo "BASH_SOURCE[0]=${BASH_SOURCE[0]}"
+echo "dirname=$(dirname "${BASH_SOURCE[0]}")"
+echo "SCRIPT_DIR=${SCRIPT_DIR}"
+
+
 echo "$(date) [cron] run_clean_data.sh 執行中" >> /tmp/cron_debug.log
 
 cd "$SCRIPT_DIR" || exit 1
