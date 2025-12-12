@@ -2,15 +2,12 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-echo "BASH_SOURCE[0]=${BASH_SOURCE[0]}"
-echo "dirname=$(dirname "${BASH_SOURCE[0]}")"
-echo "SCRIPT_DIR=${SCRIPT_DIR}"
-
 
 echo "$(date) [cron] run_clean_data.sh 執行中" >> /tmp/cron_debug.log
 
 cd "$SCRIPT_DIR" || exit 1
 
+# -f path 存在而且是「普通檔案」 -d path 存在而且是「目錄」 -e path 只要存在不管型態
 if [ -f ".venv/bin/activate" ]; then
     source .venv/bin/activate
 else
