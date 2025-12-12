@@ -7,8 +7,8 @@ import pandas as pd
 from pathlib import Path 
 import matplotlib.pyplot as plt 
 import matplotlib.ticker as mticker
-from ...database import engine
-from ...utils import ChartIn, ChartPoint
+from database import engine
+from utils import ChartIn, ChartPoint
 from .raw_sql import build_sql_for_line
 from ..utils import _validate_identifier, _safe_filename, _divisor_and_unit, add_share_and_growth
 

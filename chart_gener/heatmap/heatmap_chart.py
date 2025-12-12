@@ -7,8 +7,8 @@ import pandas as pd
 import seaborn as sns
 from pathlib import Path 
 import matplotlib.pyplot as plt 
-from ...database import engine
-from ...utils import ChartPoint 
+from database import engine
+from utils import ChartPoint 
 from ..utils import _validate_identifier, _safe_filename 
 from ..heatmap import build_sql_for_heatmap
 

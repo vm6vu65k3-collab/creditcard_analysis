@@ -3,7 +3,7 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from ..api import meta, request, dashboard
+from api import meta, request, dashboard
 
 app = FastAPI()
 
@@ -14,9 +14,9 @@ app.include_router(dashboard.router)
 
 CHART_DIR = Path(__file__).resolve().parent.parent / "chart_storage"
 
-templates = Jinja2Templates(directory = "creditcard_analysis/api/templates")
+templates = Jinja2Templates(directory = "api/templates")
 
-app.mount("/static", StaticFiles(directory = "creditcard_analysis/api/static"), name = "static")
+app.mount("/static", StaticFiles(directory = "api/static"), name = "static")
 app.mount("/chart_storage", StaticFiles(directory = str(CHART_DIR)), name = "chart_storage")
 
 @app.get("/", response_class = HTMLResponse)
