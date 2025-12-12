@@ -126,3 +126,13 @@
 [INFO] 沒有新的資料需要匯入，結束
 
 
+[TIME] 2025-12-12 14:38:36.254376
+[INFO] CSV 已下載到：/Users/bruce/Documents/test/clean_data/open_data_downloads/raw_open_data20251212.csv
+標準化欄位 ['ym', 'nation', 'industry', 'age_level', 'trans_count', 'trans_total']
+缺失值處理完成
+無重複數
+重複值處理完成
+[INFO] 資料庫目前已有 year_month： [('201909', '行', '60(含)-65歲'), ('201702', '食', '55(含)-60歲'), ('202110', '住', '20(含)-25歲'), ('201907', '其他', '30(含)-35歲'), ('201510', '百貨', '55(含)-60歲')]
+[INFO] 沒有新的資料需要匯入，結束
+
+
