@@ -37,3 +37,23 @@
 [INFO] 沒有新的資料需要匯入，結束
 
 
+[TIME] 2025-12-12 11:57:01.920726
+[INFO] CSV 已下載到：/Users/bruce/Documents/creditcard_analysis/clean_data/open_data_downloads/raw_open_data20251212.csv
+標準化欄位 ['ym', 'nation', 'industry', 'age_level', 'trans_count', 'trans_total']
+缺失值處理完成
+無重複數
+重複值處理完成
+[INFO] 資料庫目前已有 year_month： [('201806', '食', '70(含)-75歲'), ('201911', '其他', '未滿20歲'), ('201412', '住', '75(含)-80歲'), ('202107', '住', '55(含)-60歲'), ('201702', '衣', '40(含)-45歲')]
+[INFO] 沒有新的資料需要匯入，結束
+
+
+[TIME] 2025-12-12 12:26:52.035819
+[INFO] CSV 已下載到：/Users/bruce/Documents/creditcard_analysis/clean_data/open_data_downloads/raw_open_data20251212.csv
+標準化欄位 ['ym', 'nation', 'industry', 'age_level', 'trans_count', 'trans_total']
+缺失值處理完成
+無重複數
+重複值處理完成
+[INFO] 資料庫目前已有 year_month： [('202102', '行', '30(含)-35歲'), ('201909', '住', '20(含)-25歲'), ('201503', '衣', '55(含)-60歲'), ('202111', '行', '25(含)-30歲'), ('201906', '百貨', '45(含)-50歲')]
+[INFO] 沒有新的資料需要匯入，結束
+
+
