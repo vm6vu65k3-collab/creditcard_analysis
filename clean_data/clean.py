@@ -3,8 +3,8 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime 
 from sqlalchemy import text
-from ..utils import handling_missing_value, handling_duplicate_value
-from ..database import engine
+from utils import handling_missing_value, handling_duplicate_value
+from database import engine
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -92,7 +92,7 @@ def insert_into_mysql(df: pd.DataFrame, table_name: str = "clean_data"):
         print("[INFO] 匯入完成")
 
 def main():
-    print(f"[TIME]{datetime.today()}")
+    print(f"[TIME] {datetime.today()}")
     csv_path = download_csv(OPEN_DATA_CSV_URL, DATA_DIR)
     df = load_and_clean_csv(csv_path)
     insert_into_mysql(df)

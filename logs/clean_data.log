@@ -1,0 +1,8 @@
+[TIME]2025-12-12 10:44:50.970486
+[INFO] CSV 已下載到：/Users/bruce/Documents/test/clean_data/open_data_downloads/raw_open_data20251212.csv
+標準化欄位 ['ym', 'nation', 'industry', 'age_level', 'trans_count', 'trans_total']
+缺失值處理完成
+無重複數
+重複值處理完成
+[INFO] 資料庫目前已有 year_month： [('201711', '其他', '未滿20歲'), ('201405', '文教康樂', '65(含)-70歲'), ('202112', '衣', '40(含)-45歲'), ('202303', '行', '75(含)-80歲'), ('202205', '住', '45(含)-50歲')]
+[INFO] 沒有新的資料需要匯入，結束
