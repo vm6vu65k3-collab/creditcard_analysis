@@ -1,14 +1,15 @@
-
 a = 2
 c = 3
 
+#加法器
 def add(number1, number2):
     result = number1 + number2
     print(result)
 
-
 print(add(a, c))
 
-def div(number1, number2):
-    result = number1 / number2
+
+#減法器
+def sub(number1, number2):
+    result = number1 - number2
     print(result)
