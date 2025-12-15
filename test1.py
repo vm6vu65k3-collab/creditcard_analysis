@@ -8,3 +8,7 @@ def add(number1, number2):
 
 
 print(add(a, c))
+
+def div(number1, number2):
+    result = number1 / number2
+    print(result)
