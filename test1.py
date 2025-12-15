@@ -23,4 +23,3 @@ def mul(number1, number2):
 def div(number1, number2):
     result = number1 / number2
     print(result)
-    
