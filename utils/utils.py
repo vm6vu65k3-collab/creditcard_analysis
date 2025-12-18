@@ -8,12 +8,12 @@ def get_path(BASE_DIR: str, folder: str, file_name: str):
 def handling_missing_value(
     df: pd.DataFrame, 
     num_cols: Sequence[str] | None = None, 
-    cat_cols: Sequence[str] | None = None
+    str_cols: Sequence[str] | None = None
     ) -> pd.DataFrame:
     df = df.copy()
 
     num_cols = [c for c in (num_cols or []) if c in df.columns]    
-    cat_cols = [c for c in (cat_cols or []) if c in df.columns]
+    cat_cols = [c for c in (str_cols or []) if c in df.columns]
 
     for col in num_cols:
         na_ratio = df[col].isna().mean()
