@@ -1,6 +1,10 @@
+import os 
+import ssl
 import requests
 import certifi
 import pandas as pd 
+from requests.adapters import HTTPAdapter 
+from urllib3.poolmanager import PoolManager, ProxyManager 
 from pathlib import Path
 from datetime import datetime 
 from sqlalchemy import MetaData, Table
@@ -13,14 +17,77 @@ OPEN_DATA_CSV_URL = "https://www.nccc.com.tw/dataDownload/Age%20Group/BANK_TWN_A
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "open_data_downloads"
 
+def build_ssl_context(cafile: str | None = None, relax_strict: bool = True) -> ssl.SSLContext:
+    ca = cafile or certifi.where()
+    ctx = ssl.create_default_context(cafile=ca)
+
+    if relax_strict and hasattr(ctx, "verify_flags") and hasattr(ssl, "VERIFY_X509_STRICT"):
+        ctx.verify_flags &= ~ssl.VERIFY_X509_STRICT
+    
+    return ctx
+
+class SSLContextAdapter(HTTPAdapter):
+    def __init__(self, ssl_context: ssl.SSLContext, **kwargs):
+        self._ssl_context = ssl_context
+        super().__init__(**kwargs) 
+    
+    def init_poolmanager(self, connections, maxsize, block = False, **pool_kwargs):
+        self.poolmanager = PoolManager(
+            num_pools   = connections,
+            maxsize     = maxsize,
+            block       = block,
+            ssl_context = self._ssl_context,
+            **pool_kwargs
+        )
+    
+    def proxy_manager_for(self, proxy, **proxy_kwargs):
+        if proxy not in self.proxy_manager:
+            self.proxy_manager[proxy] = ProxyManager(
+                proxy_url = proxy,
+                ssl_context = self._ssl_context,
+                **proxy_kwargs
+            )
+        return self.proxy_manager[proxy]
+    
+def debug_proxy_decision(session: requests.Session, url: str) -> None:
+    # requests 內部用來合併 (session.proxies / environ proxies / no_proxy) 的設定
+    settings = session.merge_environment_settings(
+        url=url,
+        proxies=None,
+        stream=None,
+        verify=None,
+        cert=None,
+    )
+    proxies = settings.get("proxies") or {}
+
+    selected = requests.utils.select_proxy(url, proxies)
+
+    print("[DEBUG] url:", url)
+    print("[DEBUG] session.trust_env:", session.trust_env)
+    print("[DEBUG] session.proxies:", session.proxies)
+    print("[DEBUG] env HTTP_PROXY:", os.environ.get("HTTP_PROXY") or os.environ.get("http_proxy"))
+    print("[DEBUG] env HTTPS_PROXY:", os.environ.get("HTTPS_PROXY") or os.environ.get("https_proxy"))
+    print("[DEBUG] env NO_PROXY:", os.environ.get("NO_PROXY") or os.environ.get("no_proxy"))
+    print("[DEBUG] merged proxies:", proxies)
+    print("[DEBUG] selected proxy for this url:", selected)  # None 表示直連
+
+
 #下載csv資料
 def download_csv(url: str, save_dir: Path) -> Path:
     save_dir.mkdir(parents = True, exist_ok = True)
     
     today = datetime.today().strftime("%Y%m%d_%H%M%S")
     file_path = save_dir / f"raw_open_data{today}.csv"
+
+    ctx = build_ssl_context(relax_strict = True)
+    if hasattr(ctx, "verify_flags") and hasattr(ssl, "VERIFY_X509_STRICT"):
+        print("[DEBUG] verify_flags:", ctx.verify_flags, "STRICT bit:", bool(ctx.verify_flags & ssl.VERIFY_X509_STRICT))
+    session = requests.Session()
+    session.mount("https://", SSLContextAdapter(ctx))
+
+    debug_proxy_decision(session, url)
     try:
-        with requests.get(url, timeout =(10, 60), verify = certifi.where(), stream = True) as resp:
+        with session.get(url, timeout =(10, 60), stream = True) as resp:
             resp.raise_for_status()
             with open(file_path, "wb") as f:
                 for chunk in resp.iter_content(chunk_size=1024*1024):
@@ -71,36 +138,36 @@ def load_and_clean_csv(csv_path: Path) -> pd.DataFrame:
     return df
 
 #匯出至資料庫
-def insert_into_mysql(df: pd.DataFrame, table_name: str = "clean_data"):
-    with engine.begin() as conn:
-        rows = conn.execute(text(f"SELECT DISTINCT ym, industry, age_level FROM {table_name}")).all()
+# def insert_into_mysql(df: pd.DataFrame, table_name: str = "clean_data"):
+#     with engine.begin() as conn:
+#         rows = conn.execute(text(f"SELECT DISTINCT ym, industry, age_level FROM {table_name}")).all()
 
-        existing_keys = {(ym, industry, age_level) for ym, industry, age_level in rows}       
-        print(f"[INFO] 資料庫目前已有 year_month： {list(existing_keys)[:5]}")
+#         existing_keys = {(ym, industry, age_level) for ym, industry, age_level in rows}       
+#         print(f"[INFO] 資料庫目前已有 year_month： {list(existing_keys)[:5]}")
 
-        df = df.copy()
-        df['key']= list(zip(df['ym'], df['industry'], df['age_level']))
-        # ~ 在pandas, numpy 是取反
-        mask_new = ~df['key'].isin(existing_keys)
-        df_new = df.loc[mask_new].drop(columns = ['key'])
+#         df = df.copy()
+#         df['key']= list(zip(df['ym'], df['industry'], df['age_level']))
+#         # ~ 在pandas, numpy 是取反
+#         mask_new = ~df['key'].isin(existing_keys)
+#         df_new = df.loc[mask_new].drop(columns = ['key'])
 
-        if df_new.empty:
-            print("[INFO] 沒有新的資料需要匯入，結束")
-            return 
+#         if df_new.empty:
+#             print("[INFO] 沒有新的資料需要匯入，結束")
+#             return 
         
-        print(f"[INFO] 準備匯入新資料筆數： {len(df_new)}")
+#         print(f"[INFO] 準備匯入新資料筆數： {len(df_new)}")
 
     
-        df_new.to_sql(
-            name = table_name, 
-            con = conn, 
-            if_exists = "append", 
-            index = False, 
-            method = "multi", # 一次insert多筆
-            chunksize = 1000 # 大筆資料時切塊寫入
-        )
+#         df_new.to_sql(
+#             name = table_name, 
+#             con = conn, 
+#             if_exists = "append", 
+#             index = False, 
+#             method = "multi", # 一次insert多筆
+#             chunksize = 1000 # 大筆資料時切塊寫入
+#         )
         
-        print("[INFO] 匯入完成")
+#         print("[INFO] 匯入完成")
 
 def insert_into_mysql_ignore(df: pd.DataFrame, table_name: str = "clean_data", chunksize: int = 1000):
     meta = MetaData()

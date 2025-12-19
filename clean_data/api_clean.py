@@ -22,7 +22,7 @@ async def proxy_ageconsumption(regionCode: str, industryCode: str):
     
     try:
         async with httpx.AsyncClient(timeout = 60, verify = SSL_CTX, follow_redirects = True) as client:
-            r = await client.get(url, headers = {"accept": "application/octet-stream"})
+            r = await client.get(url, headers = {"Accept": "application/octet-stream"})
     except httpx.HTTPError as e:
         raise HTTPException(status_code = 502, detail = f"Upstream request failed: {e!s}")
     
