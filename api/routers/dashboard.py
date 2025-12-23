@@ -3,8 +3,8 @@ from dateutil.relativedelta import relativedelta
 from fastapi import APIRouter, Depends
 from sqlalchemy import func, cast, desc
 from sqlalchemy.orm import Session
-from models import CleanedData
-from utils import get_db, DashboardResponse, TrendPoint, TopIndustry
+from ...models import CleanedData
+from ...utils import get_db, DashboardResponse, TrendPoint, TopIndustry
 
 router = APIRouter(prefix = "/api/dashboard", tags = ['dashboard'])
 

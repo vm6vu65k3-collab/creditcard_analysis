@@ -1,8 +1,8 @@
 from fastapi import APIRouter 
 from sqlalchemy.orm import Session 
-from models import CleanedData
-from database import SessionLocal
-from utils import ColumnName, MetricColumn, ChartType, Option, MetaPayload, Db
+from ...models import CleanedData
+from ...database import SessionLocal
+from ...utils import ColumnName, MetricColumn, ChartType, Option, MetaPayload, Db
 
 router = APIRouter(prefix = "/meta", tags = ["meta"])
 

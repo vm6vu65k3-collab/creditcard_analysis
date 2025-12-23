@@ -8,8 +8,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt 
 import matplotlib.ticker as mticker
 # from ..utils import get_path
-from database import engine
-from utils import ChartPoint
+from ...database import engine
+from ...utils import ChartPoint
 from .raw_sql import build_sql_raw
 from ..utils import _validate_identifier, _safe_filename, _divisor_and_unit, add_share_and_growth
 

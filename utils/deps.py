@@ -1,6 +1,6 @@
 from typing import Annotated
 from fastapi import Depends 
-from database import SessionLocal, Session
+from ..database import SessionLocal, Session
 
 def get_db():
     db = SessionLocal()

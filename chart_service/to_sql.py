@@ -1,9 +1,9 @@
 import json, hashlib 
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.exc import IntegrityError
-from models import ChartRequest, ChartResult, ResultStatus
-from utils import get_object_by_column, ChartIn, ChartType, ChartPoint
-from chart_gener import bar_draw, line_draw, pie_draw, heatmap_draw
+from ..models import ChartRequest, ChartResult, ResultStatus
+from ..utils import get_object_by_column, ChartIn, ChartType, ChartPoint
+from ..chart_gener import bar_draw, line_draw, pie_draw, heatmap_draw
 
 class ChartParamsError(Exception):
     def __init__(

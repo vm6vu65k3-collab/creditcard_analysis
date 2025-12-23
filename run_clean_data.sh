@@ -1,19 +1,23 @@
 #!/bin/bash
+set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
+PROJECT_PARENT="$(dirname "$SCRIPT_DIR")"
 
 echo "$(date) [cron] run_clean_data.sh 執行中" >> /tmp/cron_debug.log
 
-cd "$SCRIPT_DIR" || exit 1
-
-# -f path 存在而且是「普通檔案」 -d path 存在而且是「目錄」 -e path 只要存在不管型態
-if [ -f ".venv/bin/activate" ]; then
-    source .venv/bin/activate
-else
-    echo "$(date) [cron] 找不到 .venv，請先建立虛擬環境" >> /tmp/cron_debug.log
-    exit 1
+# 確認 venv 存在（用 python 直呼叫，不依賴 source）
+PY="$SCRIPT_DIR/.venv/bin/python"
+if [ ! -x "$PY" ]; then
+  echo "$(date) [cron] 找不到 $PY，請先建立虛擬環境" >> /tmp/cron_debug.log
+  exit 1
 fi
 
-mkdir -p logs
-python -m clean_data.clean >> "$SCRIPT_DIR/logs/clean_data.log" 2>&1
+#-p建立父層
+mkdir -p "$SCRIPT_DIR/logs"
+
+# 關鍵：在 creditcard_analysis 的上一層執行 -m
+cd "$PROJECT_PARENT" || exit 1
+
+"$PY" -m creditcard_analysis.clean_data.clean --source csv_url \
+  >> "$SCRIPT_DIR/logs/clean_data.log" 2>&1

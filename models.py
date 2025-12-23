@@ -1,7 +1,7 @@
 import enum
 from sqlalchemy import Column, Integer, BigInteger, String, DateTime, Boolean, ForeignKey, JSON, Enum, func
 from sqlalchemy.orm import relationship
-from database import Base 
+from .database import Base 
 
 class BaseModel(Base):
     __abstract__ = True

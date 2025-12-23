@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
-from utils import Db, ChartIn, ChartOut, ColumnName, ChartType
-from chart_service import record_to_sql, ChartParamsError
+from ...utils import Db, ChartIn, ChartOut, ColumnName, ChartType
+from ...chart_service import record_to_sql, ChartParamsError
 
 
 router = APIRouter(prefix = "/api/request", tags = ['request'])
