@@ -23,16 +23,14 @@ function renderTrendChart(data) {
         trendchart = ec.init(board);
     }
 
-
+    if (Array.isArray(data) && data.length) {
+        latestYm = data[data.length - 1].ym;
+    }
     
+    const { startMonth, endMonth } = resolvePeriod();
+
     const xAxisName = "年月";
     const yAxisName = "金額(十億元)";
-    const startMonth = document.querySelector("#start_month").value 
-                    ? document.querySelector("#start_month").value 
-                    : `${new Date().getFullYear()}01`;
-    const endMonth = document.querySelector("#end_month").value 
-                    ? document.querySelector("#end_month").value
-                    : "目前";
     const industry = document.querySelector("#industry_select").value 
                     ? `[${document.querySelector("#industry_select").value}] `
                     : [];
@@ -94,16 +92,10 @@ function renderTopnChart(data) {
         topnchart = ec.init(board);
     }
 
-
+    const { startMonth, endMonth} = resolvePeriod();
     
     const xAxisName = "產業";
     const yAxisName = "金額(十億元)";
-    const startMonth = document.querySelector("#start_month").value 
-                        ? document.querySelector("#start_month").value 
-                        : `${new Date().getFullYear()}01`;
-    const endMonth = document.querySelector("#end_month").value 
-                        ? document.querySelector("#end_month").value
-                        : "目前";
     const age_level = document.querySelector("#age_level_select").value
                     ? `\n${document.querySelector("#age_level_select").value}`
                     : [];
