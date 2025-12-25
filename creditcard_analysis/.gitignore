@@ -13,12 +13,3 @@ venv/
 # VS Code
 .vscode/
 logs/
-
-# env
-.env 
-
-# generated charts / download raw data
-chart_storage/
-clean_data/raw_data/
-*.csv
-*.png
