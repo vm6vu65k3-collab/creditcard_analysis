@@ -1,3 +1,8 @@
+let YM_RAW = [];
+let YM_LIST = [];
+let LATEST_YM = "";
+
+
 // 針對可下拉選項的欄位做載入的處理
 function fillSelect(selector, options, {
     placeholder = "- 請選擇 -",
@@ -45,6 +50,20 @@ async function load_value( value2Nullable = true) {
         console.error(err);
     }
 }
+function toYmString(item){
+    if (item == null) return "";
+    if (typeof item === "string" || typeof item === "number") return String(item).trim();
+
+    if (typeof item === "object") {
+        const v = item.ym ?? item.value ?? item.key ?? item.year_month ?? item.month ?? item.text;
+        if (v == null) {
+            const first = Object.values(item)[0];
+            return first != null ? String(first).trim() : "";
+        }
+        return String(v).trim();
+    }
+    return "";
+}
 
 // 載入年月份清單
 async function load_year_month() {
@@ -53,8 +72,19 @@ async function load_year_month() {
         if (!response.ok) throw new Error("Failed fetch /year_month");
         const ym = await response.json();
         
-        fillSelect("#start_month", ym);
-        fillSelect("#end_month", ym);
+        YM_RAW = Array.isArray(ym) ? ym.filter(Boolean) : [];
+
+        YM_LIST = YM_RAW
+            .map(toYmString)
+            .map(v => String(v ?? "").trim())
+            .filter(v => v && v !== "null");
+        
+        YM_LIST.sort((a, b) => a.localeCompare(b));
+
+        LATEST_YM = YM_LIST.length ? YM_LIST[YM_LIST.length -1] : "";
+
+        fillSelect("#start_month", YM_RAW);
+        fillSelect("#end_month", YM_RAW);
     } catch (err) {
         console.error(err);
     }
@@ -104,13 +134,14 @@ function normalize(start_month, end_month) {
 
     const s = normal(start_month);
     const e = normal(end_month);
+    const latest = LATEST_YM;
     let period = "";
     if (s && e) {
     period = `${s}-${e}`;
     } else if (s) {
-        period = `${s}-截至本月`
+        period = latest ? `${s}-${latest}` : `${s}-截至本月`;
     } else if (e) {
-        period = `截至${e}`
+        period = `截至${e}`;
     }
     return period;
 }

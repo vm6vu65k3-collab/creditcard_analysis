@@ -3,6 +3,17 @@ import re, pandas as pd
 DIM_COLS    = {"ym", "industry", "age_level"}
 METRIC_COLS = {"trans_count", "trans_total"}
 
+LABEL_ZH = {
+    "ym"         : "年月",
+    "industry"   : "產業別",
+    "age_level"  : "年齡層",
+    "trans_count": "交易筆數",
+    "trans_total": "交易金額"
+}
+
+def label_zh(key: str) -> str:
+    return LABEL_ZH.get(key, key)
+
 def _validate_identifier(name:str, allowed):
     if name is None:
         return 
@@ -90,4 +101,6 @@ def add_share_and_growth(df: pd.DataFrame, group_col: str, time_col: str | None 
     else:
         df['growth'] = None
     
-    return df 
+    return df
+
+

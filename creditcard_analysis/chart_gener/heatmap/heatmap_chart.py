@@ -9,7 +9,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt 
 from ...database import engine
 from ...utils import ChartPoint 
-from ..utils import _validate_identifier, _safe_filename 
+from ..utils import _validate_identifier, _safe_filename, label_zh 
 from ..heatmap import build_sql_for_heatmap
 
 plt.rcParams['font.sans-serif'] = ['PingFang TC', 'HeiTi TC', 'Arial Unicode MS', 'Microsoft JhengHei', 'sans-serif']
@@ -62,14 +62,16 @@ def heatmap_draw(
         for _, row in df.iterrows()
     ]
 
+    x_label = label_zh(x_axis)
+    y_label = label_zh(y_axis)
     pivot = df.pivot(index = 'age_level', columns = 'industry', values = 'avg_amount')
     fig, ax = plt.subplots(figsize = (10, 8))
     sns.heatmap(pivot, annot = True, fmt = ',.2f', cmap = 'YlOrRd')
     title_prefix = period if period and end_month else start_month or ""
-    final_title = title or f"  {x_axis} x {y_axis} x avg_amount"
+    final_title = title or f"  {x_label} x {y_label}_平均交易金額"
     ax.set_title(f"{title_prefix}{final_title}".strip())
-    # ax.set_xlabel('x')
-    # ax.set_ylabel('y')
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
     fig.tight_layout()
     
     out_dir = Path(__file__).resolve().parent.parent.parent / "chart_storage/heatmap"

@@ -11,7 +11,7 @@ import matplotlib.ticker as mticker
 from ...database import engine
 from ...utils import ChartPoint
 from .raw_sql import build_sql_raw
-from ..utils import _validate_identifier, _safe_filename, _divisor_and_unit, add_share_and_growth
+from ..utils import _validate_identifier, _safe_filename, _divisor_and_unit, add_share_and_growth, label_zh
 
 
 
@@ -76,11 +76,13 @@ def bar_draw(
     bar = ax.bar(data['x'], data['amount'], color = 'steelblue', edgecolor = 'black')
     
     # 標題/座標
+    x_label = label_zh(x_axis)
+    y_label = label_zh(value)
     title_prefix = period if period and end_month else start_month or " "
-    final_title = (title or f"{x_axis} x {value}") + (" " + unit_label if unit_label else "")
+    final_title = (title or f"{x_label} x {y_label}") + (" " + unit_label if unit_label else "")
     ax.set_title(f"{title_prefix}{final_title}".strip())
-    ax.set_xlabel(x_axis)
-    ax.set_ylabel(value)
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
     if x_axis == "age_level":
         ax.set_xticklabels(data['x'], rotation = 45)
     

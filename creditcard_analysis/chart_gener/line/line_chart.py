@@ -12,7 +12,7 @@ import matplotlib.ticker as mticker
 from ...database import engine
 from ...utils import ChartIn, ChartPoint
 from .raw_sql import build_sql_for_line
-from ..utils import _validate_identifier, _safe_filename, _divisor_and_unit, add_share_and_growth
+from ..utils import _validate_identifier, _safe_filename, _divisor_and_unit, add_share_and_growth, label_zh
 
 plt.rcParams['font.sans-serif'] = ['PingFang TC', 'HeiTi TC', 'Arial Unicode MS', 'Micorsoft JhengHei', 'sans-serif']
 plt.rcParams['axes.unicode_minus'] = False 
@@ -63,7 +63,7 @@ def line_draw(
     div, unit_label = _divisor_and_unit(value)
     df['amount'] = (df['raw_amount'] / div).round(2)
     
-    data = add_share_and_growth(df, group_col = "x")
+    data = add_share_and_growth(df, group_col = "x").copy()
 
     points = [
         ChartPoint(
@@ -74,16 +74,28 @@ def line_draw(
         )
         for _, row in data.iterrows()
     ]
-
+    
     # 5) 畫圖
+    if x_axis == "ym":
+        data = data.sort_values("x")
+    elif x_axis == "age_level":
+        data['x'] = data['x'].astype(str).str.strip()
+        mask = data['x'].str.startswith('未滿20歲')
+        if mask.any():
+            data = pd.concat([data.loc[mask], data.loc[~mask]], ignore_index = True)
+    
     fig, ax = plt.subplots(figsize = (10, 8))
-    line = ax.plot(data['x'], data['amount'], marker = 'o', color = 'steelblue')
-
+    n = len(data)
+    x_pos = range(n)
+    ax.plot(x_pos, data['amount'], marker = 'o', color = 'steelblue')
+    
+    x_label = label_zh(x_axis)
+    y_label = label_zh(value)
     title_prefix = period if period and end_month else start_month or ""
-    final_title = (title or f"{x_axis} x {value}") + (" " + unit_label if unit_label else "")
+    final_title = (title or f"{x_label} x {y_label}") + (" " + unit_label if unit_label else "")
     ax.set_title(f"{title_prefix}{final_title}".strip())
-    ax.set_xlabel(x_axis)
-    ax.set_ylabel(value)
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
 
     # Y軸刻度
     if not data['amount'].empty:
@@ -91,18 +103,14 @@ def line_draw(
     
     ax.yaxis.set_major_formatter(mticker.FuncFormatter(lambda x, _: f'{x:,.0f}'))
     
+    labels = data['x'].astype(str)
     if x_axis == "ym":
-        data = data.sort_values("x")
-        n, step = div_labels(data['x'], max_labels = 12)
+        n, step = div_labels(labels, max_labels = 12)
         ax.set_xticks(range(0, n, step))
-        ax.set_xticklabels(data['x'].iloc[::step], rotation = 45, ha = 'right')
+        ax.set_xticklabels(labels.iloc[::step], rotation = 45, ha = 'right')
     elif x_axis == "age_level":
-        mask = data['x'].astype(str).str.strip().str.startswith('未滿20歲')
-        
-        if mask.any():
-            data = pd.concat([data.loc[mask], data.loc[~mask]], ignore_index = True) 
-        ax.set_xticks(range(list(mask)))
-        ax.set_xticklabels(data['x'], rotation = 45, ha = 'right')
+        ax.set_xticks(list(x_pos))
+        ax.set_xticklabels(labels, rotation = 45, ha = 'right')
         # ax.tick_params(axis = 'x', labelrotation = 45)
 
     fig.tight_layout()
