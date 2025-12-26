@@ -42,7 +42,7 @@ def line_draw(
     _validate_identifier(value, allow_columns)
 
     # 2) 取得 SQL指令 及 參數
-    sql, params = build_sql_for_line(
+    sql, ym_sql, params = build_sql_for_line(
         x_axis      = x_axis,
         value       = value,
         topn        = topn,
@@ -52,7 +52,18 @@ def line_draw(
         age_level   = age_level
     )
 
-    period = f"{start_month}-{end_month}"
+    ym = pd.read_sql(ym_sql, engine)
+    earliest_ym = ym.loc[0, "earliest_ym"]
+    latest_ym   = ym.loc[0, "latest_ym"]
+
+    if start_month and end_month:
+        period = f"{start_month}-{end_month}" 
+    elif start_month and not end_month:
+        period = f"{start_month}-{latest_ym}"
+    elif not start_month and end_month:
+        period = f"{earliest_ym}-{end_month}"
+    else:
+        period = f"{earliest_ym}-{latest_ym}"
     
     # 3) 查要畫圖的資料
     df = pd.read_sql(sql, engine, params = params)
@@ -91,9 +102,8 @@ def line_draw(
     
     x_label = label_zh(x_axis)
     y_label = label_zh(value)
-    title_prefix = period if period and end_month else start_month or ""
     final_title = (title or f"{x_label} x {y_label}") + (" " + unit_label if unit_label else "")
-    ax.set_title(f"{title_prefix}{final_title}".strip())
+    ax.set_title(f"{period}  {final_title}".strip())
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
 
@@ -103,15 +113,18 @@ def line_draw(
     
     ax.yaxis.set_major_formatter(mticker.FuncFormatter(lambda x, _: f'{x:,.0f}'))
     
-    labels = data['x'].astype(str)
+    x = data['x'].astype(str)
     if x_axis == "ym":
-        n, step = div_labels(labels, max_labels = 12)
+        n, step = div_labels(x, max_labels = 12)
         ax.set_xticks(range(0, n, step))
-        ax.set_xticklabels(labels.iloc[::step], rotation = 45, ha = 'right')
+        ax.set_xticklabels(x.iloc[::step], rotation = 45, ha = 'right')
     elif x_axis == "age_level":
-        ax.set_xticks(list(x_pos))
-        ax.set_xticklabels(labels, rotation = 45, ha = 'right')
+        ax.tick_params(axis = 'x', labelrotation = 45)
+        ax.set_xticklabels(x, rotation = 45, ha = 'right')
         # ax.tick_params(axis = 'x', labelrotation = 45)
+    else:
+        ax.tick_params(axis = 'x')
+        ax.set_xticklabels(x, ha = 'right')
 
     fig.tight_layout()
 
@@ -123,6 +136,6 @@ def line_draw(
     filename = f"{_safe_filename(base)}_.png"
     path = out_dir / filename 
 
-    fig.savefig(path, dpi = 300)
+    fig.savefig(path, dpi = 300, bbox_inches = 'tight')
     plt.close()
     return f"/chart_storage/line/{filename}", points

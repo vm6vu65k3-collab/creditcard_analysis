@@ -16,7 +16,7 @@ const ANALYSIS_CONFIG = {
 };
 
 const DEFAULT_FILTERS = {
-    start_month: "202001",
+    start_month: "202501",
     end_month  : "202509"
 };
 

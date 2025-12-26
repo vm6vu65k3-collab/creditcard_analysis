@@ -47,4 +47,11 @@ def build_sql_raw(
     if not is_time_x:
         params['limit'] = eff_topn
 
-    return text(sql), params
+    ym_sql = """
+        SELECT
+            MIN(ym) AS earliest_ym,
+            MAX(ym) AS latest_ym
+        FROM clean_data
+    """
+
+    return text(sql), text(ym_sql), params

@@ -30,7 +30,7 @@ def pie_draw(
     _validate_identifier(x_axis, allow_columns)
     _validate_identifier(value, allow_columns)
 
-    sql, sql_params = build_sql_for_pie(
+    sql, ym_sql, sql_params = build_sql_for_pie(
         x_axis,
         value,
         topn,
@@ -40,7 +40,19 @@ def pie_draw(
         age_level
     )
 
-    period = f"{start_month}-{end_month}"
+    ym = pd.read_sql(ym_sql, engine)
+    earliest_ym = ym.loc[0, 'earliest_ym']
+    latest_ym = ym.loc[0, 'latest_ym']
+
+    if start_month and end_month:
+        period = f"{start_month}-{end_month}"
+    elif start_month and not end_month:
+        period = f"{start_month}-{latest_ym}"
+    elif not start_month and end_month:
+        period = f"{earliest_ym}-{end_month}"
+    else:
+        period = f"{earliest_ym}-{latest_ym}"
+
 
     df = pd.read_sql(sql, engine, params = sql_params)
     if df.empty:
@@ -66,9 +78,8 @@ def pie_draw(
         counterclock = True,
         textprops = {"fontsize": 11} 
     )
-    title_prefix = period if period and end_month else start_month or " "
     final_title = (title or f"{x_axis} x {value}")
-    ax.set_title(f"{title_prefix}{final_title}".strip())    
+    ax.set_title(f"{period}{final_title}".strip())    
     ax.legend(wedges, labels, title = x_axis, loc = 'center left', bbox_to_anchor = (1, 0.5))
     fig.tight_layout()
     

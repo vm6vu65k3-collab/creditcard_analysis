@@ -1,6 +1,7 @@
 let YM_RAW = [];
 let YM_LIST = [];
 let LATEST_YM = "";
+let EARLIEST_YM = "";
 
 
 // 針對可下拉選項的欄位做載入的處理
@@ -82,6 +83,7 @@ async function load_year_month() {
         YM_LIST.sort((a, b) => a.localeCompare(b));
 
         LATEST_YM = YM_LIST.length ? YM_LIST[YM_LIST.length -1] : "";
+        EARLIEST_YM = YM_LIST.length ? YM_LIST[0] : "";
 
         fillSelect("#start_month", YM_RAW);
         fillSelect("#end_month", YM_RAW);
@@ -134,6 +136,7 @@ function normalize(start_month, end_month) {
 
     const s = normal(start_month);
     const e = normal(end_month);
+    const earliest = EARLIEST_YM; 
     const latest = LATEST_YM;
     let period = "";
     if (s && e) {
@@ -141,7 +144,7 @@ function normalize(start_month, end_month) {
     } else if (s) {
         period = latest ? `${s}-${latest}` : `${s}-截至本月`;
     } else if (e) {
-        period = `截至${e}`;
+        period = earliest ? `${earliest}-${e}` : `$截至${e}`;
     }
     return period;
 }

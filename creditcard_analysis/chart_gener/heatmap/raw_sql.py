@@ -38,5 +38,12 @@ def build_sql_for_heatmap(
         {order_clause}
     """
 
+    ym_sql = """
+        SELECT 
+            MIN(ym) AS earliest_ym,
+            MAX(ym) AS latest_ym
+        FROM clean_data
+    """
 
-    return text(sql), params
+
+    return text(sql), text(ym_sql), params

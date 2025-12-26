@@ -48,23 +48,12 @@ async function generate_chart(){
         const result = await response.json();
         const points = result.points || [];
         const period = normalize(start_month, end_month);
-
+        
         renderHeatMap(period, points, {
             x_axis, 
             y_axis,
             set_title,
         })
-
-        // if (result.url) {
-        //     const board = document.querySelector("#board");
-        //     board.replaceChildren();
-        //     const img = document.createElement("img");
-        //     img.src = result.url;
-        //     img.alt = set_title || `${chart_type}chart`;
-        //     img.classList.add("chart-img");
-        //     img.style.maxWidth = "100%";
-        //     board.appendChild(img);
-        // }
 
         const btnDownLoad = document.querySelector("#btn_download_img");
         if (btnDownLoad) {

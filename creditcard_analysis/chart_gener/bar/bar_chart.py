@@ -38,7 +38,7 @@ def bar_draw(
     _validate_identifier(value, allow_columns)
 
     # 2) 取 SQL + params
-    sql, params = build_sql_raw(
+    sql, ym_sql, params = build_sql_raw(
         x_axis,
         value,     
         topn,       
@@ -48,7 +48,18 @@ def bar_draw(
         age_level
     ) 
     
-    period = f"{start_month}-{end_month}"
+    ym = pd.read_sql(ym_sql, engine)
+    earliest_ym = ym.loc[0, 'earliest_ym']
+    latest_ym = ym.loc[0, 'latest_ym']
+
+    if start_month and end_month:
+        period = f"{start_month}-{end_month}"
+    elif start_month and not end_month:
+        period = f"{start_month}-{latest_ym}"
+    elif not start_month and end_month:
+        period = f"{earliest_ym}-{end_month}"
+    else:
+        period = f"{earliest_ym}-{latest_ym}"
 
     # 3) 查資料（記得帶 params)
     df = pd.read_sql(sql, engine, params = params)
@@ -78,9 +89,8 @@ def bar_draw(
     # 標題/座標
     x_label = label_zh(x_axis)
     y_label = label_zh(value)
-    title_prefix = period if period and end_month else start_month or " "
     final_title = (title or f"{x_label} x {y_label}") + (" " + unit_label if unit_label else "")
-    ax.set_title(f"{title_prefix}{final_title}".strip())
+    ax.set_title(f"{period}  {final_title}".strip())
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
     if x_axis == "age_level":

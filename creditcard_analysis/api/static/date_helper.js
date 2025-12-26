@@ -17,7 +17,9 @@ function resolvePeriod(){
     }
     // 只輸入結束
     if (!startInput && endInput) {
-        const startMonth = dateToYm(addMonths(ymToDate(endInput), -36));
+        const startMonth = dateToYm(addMonths(ymToDate(endInput), -36)) > `201401`
+            ? dateToYm(addMonths(ymToDate(endInput), -36))
+            : `201401`;
         if (startEl) startEl.value = startMonth;
         return {startMonth, endMonth: endInput};
     }

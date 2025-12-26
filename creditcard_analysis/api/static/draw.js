@@ -1,14 +1,10 @@
 let chart = null;
 
 function ageSortKey(label) {
-    if (!label) return 9999;
-
-    if  (String(label).includes('未滿20歲')) return -1000;
-    
-    const m = String(label).match(/\d+/);
-    if (m) return parseInt(m[0], 10);
-
-    return 9999;
+    const s = String(label).trim();
+    if (s.startsWith('未滿20')) return 0;
+    const m = s.match(/\d+/);
+    return m ? parseInt(m[0], 10) : 999;
 }
 
 function sortAgeLabels(labels) {
@@ -16,7 +12,7 @@ function sortAgeLabels(labels) {
         const ka = ageSortKey(a);
         const kb = ageSortKey(b);
         if (ka !== kb) return ka - kb;
-        return String(a).localeCompare(string(b), 'zh-hant');
+        return String(a).localeCompare(String(b), 'zh-hant');
     });
 }
 
@@ -319,6 +315,7 @@ function renderHeatMap(period, points, ctx) {
             name: yAxisName,
             data: yCategories,
             splitArea: { show: true},
+            inverse: ctx.y_axis === "age_level"
         },
         grid: {
             top: 80,
