@@ -1,9 +1,0 @@
-[INFO] 2026-01-05 16:09:45.183304
-[INFO] CSV 已下載至：/Users/bruce/Documents/creditcard_analysis_project/creditcard_analysis/clean_data/test_raw_data/test_raw_data20260105_160945.csv
-缺失值處理完成
-無重複數
-重複值處理完成
-[INFO] 準備匯入資料筆數：13916
-[INFO] 資料已匯入'clean_data'
-[INFO] ETL完成
-
