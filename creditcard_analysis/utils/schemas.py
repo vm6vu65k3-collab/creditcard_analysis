@@ -84,14 +84,20 @@ class ChartOut(BaseModel):
 
 
 class TrendPoint(BaseModel):
-    ym: str
-    amount: float 
+    ym    : str
+    amount: float
 
 class TopIndustry(BaseModel):
     industry: str
-    amount: float 
+    amount  : float
+
+class TopnPerMonth(BaseModel):
+    ym      : str
+    industry: str
+    amount  : float
 
 class DashboardResponse(BaseModel):
-    trend: List[TrendPoint]
-    topn: List[TopIndustry]
+    trend    : List[TrendPoint]
+    topn     : List[TopIndustry]
+    topn_per_month: List[TopnPerMonth]
 

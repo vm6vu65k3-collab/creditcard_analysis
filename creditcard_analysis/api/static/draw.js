@@ -43,7 +43,7 @@ function renderChart(chart_type, period, points, ctx){
     }
     const { x_axis, y_axis, set_title} = ctx;
    
-    const sortedPoints = (x_axis === "age_level")
+    const sortedPoints = (x_axis === "age_level") && (chart_type === "line")
         ? sortPointsByAgeLevel(points)
         : points;
 

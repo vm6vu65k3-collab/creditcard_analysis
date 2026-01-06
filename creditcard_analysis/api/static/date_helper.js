@@ -1,5 +1,6 @@
 // 時間處理
 let latestYm = null;
+let earliest = null;
 function resolvePeriod(){
     const startEl = document.querySelector("#start_month");
     const endEl = document.querySelector("#end_month");
@@ -9,17 +10,13 @@ function resolvePeriod(){
 
     // 都沒輸入
     if(!startInput && !endInput) {
-        const startMonth = `${new Date().getFullYear()}01`;
         const endMonth = latestYm || dateToYm(new Date());
-        // if (startEl) startEl.value = startMonth;  會讓輸入框已經有值
-        // if (endEl) endEl.value = endMonth;
+        const startMonth = `${endMonth.slice(0, 4)}01`;
         return {startMonth, endMonth};
     }
     // 只輸入結束
     if (!startInput && endInput) {
-        const startMonth = dateToYm(addMonths(ymToDate(endInput), -36)) > `201401`
-            ? dateToYm(addMonths(ymToDate(endInput), -36))
-            : `201401`;
+        const startMonth = earliest || `201401`;
         if (startEl) startEl.value = startMonth;
         return {startMonth, endMonth: endInput};
     }

@@ -57,7 +57,7 @@ def download_csv(csv_url: str, save_dir: Path, cafile: str | None = None) -> Pat
     except requests.exceptions.RequestException as e:
         if file_path.exists():
             file_path.unlink(missing_ok = True)
-            raise RuntimeError(f"下載失敗：{e}") from e 
+        raise RuntimeError(f"下載失敗：{e}") from e 
     
     print(f"[INFO] CSV 已下載至：{file_path}")
     return file_path

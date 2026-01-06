@@ -1,3 +1,11 @@
+async function init() {
+    await load_year_month();
+    bindEvents();
+}
+
+init().catch(console.error);
+
+
 const ANALYSIS_CONFIG = {
     "1": {
         chart_type: "bar",
@@ -13,11 +21,6 @@ const ANALYSIS_CONFIG = {
         value2    : "trans_count",
         set_title : "各產業所有族群平均消費金額"
     }
-};
-
-const DEFAULT_FILTERS = {
-    start_month: "202501",
-    end_month  : "202509"
 };
 
 const DEFAULT_CREATE_BY = 999999;
@@ -45,7 +48,7 @@ async function top_analysis(kind) {
         params_json,
         params_figure: {set_title},
         create_by: DEFAULT_CREATE_BY,
-        filters: { ...DEFAULT_FILTERS }
+        filters: getDefaultFilters()
     };
 
     console.log(payload);

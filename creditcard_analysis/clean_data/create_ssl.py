@@ -21,9 +21,9 @@ class SSLContextAdapter(HTTPAdapter):
     
     def init_poolmanager(self, connections, maxsize, block = True, **pool_kwargs):
         self.poolmanager = PoolManager(
-            num_pools = connections,
-            maxsize = maxsize,
-            block = block, 
+            num_pools   = connections,
+            maxsize     = maxsize,
+            block       = block,
             ssl_context = self._ssl_context,
             **pool_kwargs 
         )
@@ -32,7 +32,7 @@ class SSLContextAdapter(HTTPAdapter):
     def proxy_manager_for(self, proxy, **proxy_kwargs):
         if proxy not in self.proxy_manager:
             self.proxy_manager[proxy] = ProxyManager(
-                proxy_url = proxy,
+                proxy_url   = proxy,
                 ssl_context = self._ssl_context,
                 **proxy_kwargs
             )

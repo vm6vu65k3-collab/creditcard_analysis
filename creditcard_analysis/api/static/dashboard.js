@@ -1,3 +1,6 @@
+let TOPN_BY_YM = new Map();
+let SELECTED_YM = null;
+
 async function loadDashboard(){
     const params     = new URLSearchParams();
     
@@ -26,9 +29,34 @@ async function loadDashboard(){
         const data  = await response.json();
         const trend = data.trend || [];
         const topn  = data.topn || [];
+        const per_month = data.topn_per_month || [];
         
-        renderTrendChart(trend);
+        const topnByYm = new Map();
+        for (const r of per_month) {
+            if(!r || !r.ym) continue;
+            const amt = Number(r.amount);
+            if (!Number.isFinite(amt)) continue;
+
+            if (!topnByYm.has(r.ym)) topnByYm.set(r.ym, []);
+            topnByYm.get(r.ym).push({ industry: r.industry, amount: amt });
+        }
+
+        for (const arr of topnByYm.values()) {
+            arr.sort((a, b) => b.amount - a.amount);
+        }
+
+        TOPN_BY_YM = topnByYm;
+        
+        SELECTED_YM = endMonth || trend.at(-1)?.ym || null;
+    
+        renderTrendChart(trend, {
+            onYmClick: (ym) => {
+                SELECTED_YM = ym;
+                renderTopnPerMonthChart(ym, TOPN_BY_YM.get(ym) || [], { industrySelected: !!industry });
+            }
+        });
         renderTopnChart(topn);
+        renderTopnPerMonthChart(SELECTED_YM, TOPN_BY_YM.get(SELECTED_YM) || [], { inudstrySelected: !!industry });
     } catch (err) {
         console.error(err);
         alert(err.message);

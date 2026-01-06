@@ -10,6 +10,7 @@ function fillSelect(selector, options, {
     nullable = false, 
 } = {}) {
     const el = document.querySelector(selector);
+    if (!el) return;
     el.replaceChildren();
     const frag = document.createDocumentFragment();
     const ph = document.createElement("option");
@@ -147,6 +148,14 @@ function normalize(start_month, end_month) {
         period = earliest ? `${earliest}-${e}` : `$截至${e}`;
     }
     return period;
+}
+
+function getDefaultFilters(){
+    const endYm = /^\d{6}$/.test(LATEST_YM) ? LATEST_YM : dateToYm(new Date());
+    return {
+        end_month: endYm,
+        start_month: `${endYm.slice(0, 4)}01`
+    };
 }
 
 
