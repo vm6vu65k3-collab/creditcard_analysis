@@ -4,13 +4,14 @@ from requests.adapters import HTTPAdapter
 from urllib3.poolmanager import PoolManager, ProxyManager
 
 
-def build_ssl_context(cafile: str, relax_strict = True) -> ssl.SSLContext:
+def build_ssl_context(cafile: str | None, relax_strict = True) -> ssl.SSLContext:
     ca = cafile or certifi.where()
     ctx = ssl.create_default_context(cafile = ca)
 
     if relax_strict and hasattr(ctx, 'verify_flags') and hasattr(ssl, 'VERIFY_X509_STRICT'):
         ctx.verify_flags &= ~ssl.VERIFY_X509_STRICT 
-
+    
+    print("verify_flags =", ctx.verify_flags)
     return ctx 
 
 
@@ -20,7 +21,7 @@ class SSLContextAdapter(HTTPAdapter):
         super().__init__(**kwargs)
 
     def init_poolmanager(self, connections, maxsize, block = True, **pool_kwargs):
-        self.init_poolmanager = PoolManager(
+        self.poolmanager = PoolManager(
             num_pools   = connections,
             maxsize     = maxsize,
             block       = block,
