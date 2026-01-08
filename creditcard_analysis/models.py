@@ -54,9 +54,18 @@ class ChartResult(BaseModel):
     
 class CleanedData(BaseModel):
     __tablename__ = "clean_data"
-    ym          = Column (String(20), nullable = False, comment = "年月")
+    ym          = Column(String(20), nullable = False, comment = "年月")
     nation      = Column(String(20), nullable = False, comment = "地區")
     industry    = Column(String(20), nullable = False, comment = "產業別")
     age_level   = Column(String(20), nullable = False, comment = "年齡層")
     trans_count = Column(BigInteger, nullable = False, comment = "交易筆數")
     trans_total = Column(BigInteger, nullable = False, comment = "交易金額")
+
+class TestTable(BaseModel):
+    __tablename__ = "test_table"
+    ym          = Column(String(20), nullable = False, comment = '年月')
+    nation      = Column(String(20), nullable = False, comment = '地區')
+    industry    = Column(String(20), nullable = False, comment = '產業別')
+    age_level   = Column(String(20), nullable = False, comment = '年齡層')
+    trans_count = Column(BigInteger, nullable = False, comment = '交易筆數')
+    trans_total = Column(BigInteger, nullable = False, comment = '交易金額')
