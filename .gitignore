@@ -13,6 +13,8 @@ venv/
 # VS Code
 .vscode/
 logs/
+script_logs/
+
 
 # env
 .env 
