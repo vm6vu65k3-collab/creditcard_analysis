@@ -17,4 +17,4 @@ def request_chart(payload: ChartIn, db: Db):
                 "code": e.code,
                 "field": e.field
             }
-        ) 
+        )

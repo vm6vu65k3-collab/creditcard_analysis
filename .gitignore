@@ -24,3 +24,7 @@ chart_storage/
 clean_data/raw_data/
 *.csv
 *.png
+
+
+# excel
+excel_file/

@@ -31,9 +31,9 @@ async function generate_chart(){
         }
     };
     try {
-        const response = await fetch("/api/request", {
+        const response = await fetch("/api/request/", {
             method: "POST",
-            headers: {"Content-type": "application/json"},
+            headers: {"Content-Type": "application/json"},
             body: JSON.stringify(payload)
     
         });
