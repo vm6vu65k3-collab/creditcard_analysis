@@ -1,15 +1,19 @@
+import logging
 import pandas as pd 
+from pathlib import Path
 from typing import Sequence
-def get_path(BASE_DIR: str, folder: str, file_name: str):
-    path = BASE_DIR / folder / file_name  
-    return path  
+
+logger = logging.getLogger(__name__)
+
+def get_path(BASE_DIR: Path, folder: str, file_name: str) -> Path:
+    return BASE_DIR / folder / file_name    
 
 
 def handling_missing_value(
     df: pd.DataFrame, 
     num_cols: Sequence[str] | None = None, 
     str_cols: Sequence[str] | None = None
-    ) -> pd.DataFrame:
+) -> pd.DataFrame:
     df = df.copy()
 
     num_cols = [c for c in (num_cols or []) if c in df.columns]    
@@ -20,7 +24,7 @@ def handling_missing_value(
         if na_ratio > 0:
             median_val = df[col].median()
             df[col] = df[col].fillna(median_val)
-            print(f"{col} 欄位缺失率：{na_ratio:.2%} 用中位數{median_val}填補") 
+            logger.info("%s 欄位缺失率：%.2f%% 用中位數 %s填補", col, na_ratio * 100, median_val) 
             
     for col in cat_cols:
         na_ratio = df[col].isna().mean()
@@ -31,11 +35,11 @@ def handling_missing_value(
         if not mode_val.empty:
             fill_val = mode_val.iloc[0]
             df[col] = df[col].fillna(fill_val) 
-            print(f"{col} 欄位缺失率：{na_ratio:.2%} 用眾數填補")
+            logger.info("%s 欄位缺失率：%.2f%% 用眾數 %s 填補", col, na_ratio * 100, fill_val)
         else:
-            print(f"{col} 欄位缺失率：{na_ratio:.2%}，無眾數可填補，保留缺失值")
+            logger.info("%s 欄位缺失率：%.2f%%，無眾數可填補，保留缺失值", col, na_ratio * 100)
         
-    print("缺失值處理完成")
+    logger.info("缺失值處理完成")
     return df 
 
 def handling_duplicate_value(df):
@@ -44,10 +48,10 @@ def handling_duplicate_value(df):
         before = len(df)
         df = df.drop_duplicates()
         after = len(df)
-        print(f"重複值：{dup_count}筆，刪除後筆數：{after}(原本{before})")
+        logger.info("重複值：%s 筆，刪除後筆數：%s (原本 %s)", dup_count, after, before)
     else:
-        print("無重複數")
+        logger.info("無重複數")
     
-    print("重複值處理完成")
+    logger.info("重複值處理完成")
     return df
 
