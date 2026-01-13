@@ -100,4 +100,3 @@ class DashboardResponse(BaseModel):
     trend    : List[TrendPoint]
     topn     : List[TopIndustry]
     topn_per_month: List[TopnPerMonth]
-

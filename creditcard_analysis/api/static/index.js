@@ -102,4 +102,4 @@ function bindEvents(){
     });
 }
 
-bindEvents();
+// bindEvents();
