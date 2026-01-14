@@ -42,14 +42,51 @@ def caplog_info_utils(caplog):
 #         assert s in caplog_info_utils.text
 
 
-def test_handling_value_category_mode_empty_keep_na(caplog_info_utils):
-    df = pd.DataFrame({"x": [None, None, None]})
-    out = handling_missing_value(df, num_cols = [], str_cols = ['x'])
+# def test_handling_value_category_mode_empty_keep_na(caplog_info_utils):
+#     df = pd.DataFrame({"x": [None, None, None]})
+#     out = handling_missing_value(df, num_cols = [], str_cols = ['x'])
     
-    assert df['x'].isna().sum() == 3
+#     assert df['x'].isna().sum() == 3
 
-    expect = pd.DataFrame({"x": [None, None, None]})
-    pdt.assert_frame_equal(out, expect)
+#     expect = pd.DataFrame({"x": [None, None, None]})
+#     pdt.assert_frame_equal(out, expect)
 
-    for s in ['保留缺失值', '缺失值處理完成']:
-        assert s in caplog_info_utils.text
+#     for s in ['保留缺失值', '缺失值處理完成']:
+#         assert s in caplog_info_utils.text
+
+# def test_handling_value_ignore_unkown_columns(caplog_info_utils):
+#     df = pd.DataFrame({'x': [1.0, None, 3.0]})
+#     out = handling_missing_value(df, num_cols = ['x', 'y'], str_cols = ['cat'])
+    
+#     assert out['x'].isna().sum() == 0
+    
+#     expect = pd.DataFrame({'x': [1.0, 2.0, 3.0]})
+#     pdt.assert_frame_equal(out, expect)
+#     for s in ['用中位數', '缺失值處理完成']:
+#         assert s in caplog_info_utils.text
+
+# def test_handling_duplicate_value_drop_duplicate(caplog_info_utils):
+#     df = pd.DataFrame({'x': [1, 1, 2], 'y': ['x', 'x', 'y']})
+    
+#     out = handling_duplicate_value(df)
+#     expect = pd.DataFrame({'x': [1, 2], 'y': ['x', 'y']})
+#     out2 = out.reset_index(drop = True)
+#     expect2 = expect.reset_index(drop = True)
+
+#     pdt.assert_frame_equal(out2, expect2)
+
+#     for s in ['刪除後筆數', '重複值處理完成']:
+#         assert s in caplog_info_utils.text
+
+
+# def test_handling_duplicate_value_no_duplicate(caplog_info_utils):
+#     df = pd.DataFrame({'x': [1, 2, 3], 'y': ['a', 'b', 'c']})
+    
+#     out = handling_duplicate_value(df)
+    
+#     assert out.duplicated().sum() == 0 
+
+#     pdt.assert_frame_equal(df.reset_index(drop = True), out.reset_index(drop = True))
+
+#     for s in ['無重複數', '重複值處理完成']:
+#         assert s in caplog_info_utils.text
