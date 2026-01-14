@@ -51,7 +51,7 @@ class ParamsFigure(BaseModel):
     set_xlabel : Optional[str]       = None
     set_ylabel : Optional[str]       = None
 
-    @field_validator("figsize")
+    @field_validator("figsize", mode = 'before')
     @classmethod 
     def normalize_figsize(cls, v):
         if isinstance(v, (list, tuple)) and len(v) == 2:
