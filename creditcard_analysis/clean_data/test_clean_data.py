@@ -5,17 +5,17 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime
 from dataclasses import dataclass
-from sqlalchemy import MetaData, Table 
-from sqlalchemy.dialects.mysql import insert as mysql_insert 
+from sqlalchemy import MetaData, Table
+from sqlalchemy.dialects.mysql import insert as mysql_insert
 
 
 from ..database import engine
 from .test_ssl import build_ssl_context, SSLContextAdapter
 from ..utils import handling_missing_value, handling_duplicate_value
 
-#===========
+#============
 # Config
-#===========
+#============
 BASE_DIR = Path(__file__).resolve().parents[0]
 DATA_DIR = BASE_DIR / "test_raw_data"
 TABLE_NAME = 'test_table'
@@ -33,11 +33,10 @@ COLS_MAP = {
 
 EXPECTED = ['ym', 'nation', 'industry', 'age_level', 'trans_count', 'trans_total']
 
-
-#===========
+#============
 # Extract
-#===========
-def download_csv(csv_url: str, save_dir: Path, cafile: str | None = None ) -> Path:
+#============
+def download_csv(csv_url: str, save_dir: Path, cafile: str) -> Path:
     save_dir.mkdir(exist_ok = True, parents = True)
     ts = datetime.now().strftime('%Y%m%d_%H%M%S')
     file_path = save_dir / f"test_data{ts}.csv"
@@ -45,7 +44,7 @@ def download_csv(csv_url: str, save_dir: Path, cafile: str | None = None ) -> Pa
     ctx = build_ssl_context(cafile, relax_strict = True)
     session = requests.Session()
     session.mount("https://", SSLContextAdapter(ctx))
-    
+
     try:
         with session.get(csv_url, timeout = (10, 60), stream = True) as resp:
             resp.raise_for_status()
@@ -56,13 +55,13 @@ def download_csv(csv_url: str, save_dir: Path, cafile: str | None = None ) -> Pa
     except requests.exceptions.RequestException as e:
         if file_path.exists():
             file_path.unlink(missing_ok = True)
-        raise RuntimeError(f"下載失敗：{e}") from e 
+        raise RuntimeError(f'下載失敗：{e}') from e 
     
-    print(f"[INFO] CSV 已下載至：{file_path}")
-    return file_path
+    print(f'[INFO] CSV 已下載至：{file_path}')
+    
+    return file_path 
 
-
-#====================== load_data (CSV / JSON) ======================
+#======================== load (csv / json) ========================
 def load_csv(csv_path: Path) -> pd.DataFrame:
     df = pd.read_csv(
         csv_path,
@@ -72,38 +71,37 @@ def load_csv(csv_path: Path) -> pd.DataFrame:
 
     return df 
 
-
 def load_json(json_path: Path) -> pd.DataFrame:
     try:
         with open(json_path, 'r', encoding = 'utf-8-sig') as f:
             payload = json.load(f)
             if isinstance(payload, dict):
-                found = None
+                found = None 
                 for k, v in payload.items():
                     if isinstance(v, list) and (not v or isinstance(v[0], dict)):
-                        found = v 
-                    if found is not None:
-                        payload = found 
-                    elif payload and all(isinstance(v, list) for v in payload.values()):
-                        payload = list(payload.values())
+                        found = v
+                        break 
+                if found is not None:
+                    payload = found 
+                elif payload and all(isinstance(v[0], dict) for v in payload.values()):
+                    payload = list(payload.values())
             if not isinstance(payload, list):
                 raise ValueError("JSON 無法轉成 records list")
-        df = pd.DataFrame(payload)    
-
+        
+        df = pd.DataFrame(payload)
     except json.JSONDecodeError:
-        df = pd.read_json(json_path, lines = True, encoding = 'utf-8-sig') 
-    
+        df = pd.read_json(json_path, lines = True, encoding = 'utf-8-sig')
+
     df = df.reset_index(drop = True)
 
     return df 
 
-
-#===========
+#============
 # Transform 
-#===========
+#============
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     df = df.rename(columns = COLS_MAP).copy()
-
+    
     missing = [c for c in EXPECTED if c not in df.columns]
     if missing:
         print(f"缺失欄位：{missing} 目前欄位：{df.columns.tolist()}")
@@ -116,32 +114,25 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
             .str.strip()
         )
         df[cols] = pd.to_numeric(df[cols], errors = 'coerce')
-    
-    df = df.astype(
-        {
-            'ym'         : str,
-            'nation'     : str,
-            'industry'   : str,
-            'age_level'  : str,
-            'trans_count': 'int64',
-            'trans_total': 'int64'
-        }
-    )
 
-    num_cols = ['trans_count', 'trans_total']
-    str_cols = ['ym', 'nation', 'industry', 'age_level']
+    num_cols = ['trans_count',' trans_total']
+    str_cols = ['ym', 'nation', 'industry', 'age_level', 'trans_count', 'trans_total']
+    
     df = handling_missing_value(df, num_cols, str_cols)
     df = handling_duplicate_value(df)
 
     df = df[EXPECTED]
 
-    return df 
+    return df
 
-def insert_into_db(df: pd.DataFrame, table_name: str = TABLE_NAME, chunk_size:int = 1000) -> None:
+#============
+# Load DB
+#============
+def insert_into_db(df: pd.DataFrame, table_name: str = TABLE_NAME, chunk_size: int = 1000) -> None:
     if df is None or df.empty:
-        print("[INFO] 沒有資料可匯入，結束匯入")
+        print('[INFO] 沒有資料可匯入，結束匯入')
         return 
-    
+
     meta = MetaData()
     table = Table(table_name, meta, autoload_with = engine)
     records = df.to_dict(orient = 'records')
@@ -158,12 +149,11 @@ def insert_into_db(df: pd.DataFrame, table_name: str = TABLE_NAME, chunk_size:in
     print(f"[INFO] 資料已匯入：{table_name}")
 
 
-
 @dataclass 
 class ETLOptions:
     source    : str
     url       : str | None = None
-    path      : str | None = None
+    path      : Path | None = None
     out_dir   : Path = DATA_DIR
     table_name: str = TABLE_NAME
     cafile    : str | None = None
@@ -172,39 +162,39 @@ class ETLOptions:
 def run_etl(opts: ETLOptions):
     if opts.source == "csv_url":
         if not opts.url:
-            raise ValueError("soure = csv_url時，必須提供url")
+            raise ValueError('source = csv_url時，必須提供url')
         csv_path = download_csv(opts.url, opts.out_dir, opts.cafile)
         df_raw = load_csv(csv_path)
     
     elif opts.source == "json_path":
         if not opts.path:
-            raise ValueError("source = json_path時，必須提供path")
+            raise ValueError('source = json_path時，必須提供path')
         df_raw = load_json(opts.path)
-    
+
     else:
         raise ValueError('source 只支援 CSV 及 JSON')
-    
+
     df = clean_data(df_raw)
     insert_into_db(df)
 
-    print("[INFO] ETL完成")
-
+    print('[INFO] ETL完成\n')
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description = 'ETL for NCCC (CSV / JSON) -> MySQL')
     p.add_argument('--source', default = None, help = '資料來源型態')
-    p.add_argument('--url', default = None, help = 'source = csv_url時，下載的url')
-    p.add_argument('--path', default = None, help = 'source = json_path時，JSON的檔案路徑')
-    p.add_argument('--out_dir', default = str(DATA_DIR), help = '(CSV模式下)csv檔案路徑')
+    p.add_argument('--url', default = None, help = 'source = csv_url時，下載CSV所需的URL')
+    p.add_argument('--path', default = None, help = 'source = json_path時，JSON檔案路徑')
+    p.add_argument('--out_dir', default = str(DATA_DIR), help = '(CSV模式下)檔案存放路徑')
     p.add_argument('--table_name', default = str(TABLE_NAME), help = '匯入資料表名稱')
-    p.add_argument('--cafile', default = None, help = '指定CA bundle 檔案')
+    p.add_argument('--cafile', default = None, help = '指定 CA bundle 檔案')
 
-    return p
-
+    return p 
 
 def main():
+    print(f"[TIME] {datetime.now()}")
     parser = build_parser()
     args = parser.parse_args()
+
     opts = ETLOptions(
         source     = args.source,
         url        = args.url if args.url else (OPEN_DATA_CSV_URL if args.source == 'csv_url' else None),
@@ -212,7 +202,7 @@ def main():
         out_dir    = Path(args.out_dir).expanduser().resolve(),
         table_name = args.table_name,
         cafile     = args.cafile
-    )
+    ) 
 
     run_etl(opts)
 

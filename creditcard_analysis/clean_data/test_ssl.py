@@ -1,13 +1,12 @@
-import ssl 
+import ssl
 import certifi 
 from requests.adapters import HTTPAdapter
 from urllib3.poolmanager import PoolManager, ProxyManager
 
-
 def build_ssl_context(cafile: str, relax_strict: bool = True) -> ssl.SSLContext:
     ca = cafile or certifi.where()
     ctx = ssl.create_default_context(cafile = ca)
-
+    
     if relax_strict and hasattr(ctx, 'verify_flags') and hasattr(ssl, 'VERIFY_X509_STRICT'):
         ctx.verify_flags &= ~ssl.VERIFY_X509_STRICT 
 
@@ -27,14 +26,13 @@ class SSLContextAdapter(HTTPAdapter):
             block     = block,
             **pool_kwargs
         )
-
+    
     def proxy_manager_for(self, proxy, **proxy_kwargs):
         if proxy not in self.proxy_manager:
-            proxy_kwargs['ssl_context'] = self._ssl_context
+            proxy_kwargs['ssl_context'] = self._ssl_context 
             self.proxy_manager[proxy] = ProxyManager(
                 proxy_url = proxy,
                 **proxy_kwargs
             )
         
         return self.proxy_manager[proxy]
-    
