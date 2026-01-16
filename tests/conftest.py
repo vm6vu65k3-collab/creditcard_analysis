@@ -27,6 +27,26 @@ def pytest_configure(config):
         force = True
     )
 
+
+@pytest.fixture
+def make_chartin():
+    def make(chart_type: ChartType, x_axis = ColumnName.industry, y_axis = None):
+        ChartIn(
+            chart_type = chart_type,
+            params_json = ParamsJSON(x_axis = x_axis, y_axis = y_axis),
+            params_figure = ParamsFigure(),
+            create_by = 1,
+            filters = Filter()
+        )
+
+    return make
+
+
+
+
+
+
+
 @pytest.fixture
 def make_chartin():
     def _make(chart_type: ChartType, x_axis = ColumnName.industry, y_axis = None):
