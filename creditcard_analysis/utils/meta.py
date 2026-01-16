@@ -8,4 +8,3 @@ class Option(BaseModel):
 class MetaPayload(BaseModel):
     columns: List[Option]
     chart_type: List[Option]
-
