@@ -10,7 +10,7 @@ from sqlalchemy.dialects.mysql import insert as mysql_insert
 
 from ..database import engine
 from .create_ssl import build_ssl_context, SSLContextAdapter
-from ..utils import handling_missing_value, handling_duplicate_value
+from ..utils import handling_missing_value, handling_duplicate_value, format_elapsed
 
 
 
@@ -158,11 +158,12 @@ def insert_into_mysql(df: pd.DataFrame, table_name = "clean_data", chunk_size = 
 
     print(f"[INFO] 準備匯入筆數：{total}")
 
+    stmt = mysql_insert(table).prefix_with('IGNORE')
+    
     with engine.begin() as conn:
         for i in range(0, total, chunk_size):
             batch = records[i: i + chunk_size]
-            stmt = mysql_insert(table).values(batch).prefix_with("IGNORE")
-            conn.execute(stmt)
+            conn.execute(stmt, batch)
     
     print("[INFO] 匯入完成 (重複資料已自動略過)")
 
@@ -193,10 +194,9 @@ def run_etl(opts: ETLOptions) -> None:
         raise ValueError("source 只支援 csv_url 及 json_path")
     
     df = clean_data(df_raw)
-    print(f"[DEBUG] 清理後：{len(df)}")
     insert_into_mysql(df, opts.table_name)
     
-    print("[INFO] ETL完成\n")
+    print("[INFO] ETL完成")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -212,7 +212,8 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main():
-    print(f"[TIME] {datetime.now()}")
+    t1 = datetime.now()
+    print(f"[TIME] {t1}")
     parser = build_parser()
     args = parser.parse_args()
     
@@ -224,8 +225,10 @@ def main():
         table_name = args.table_name,
         cafile     = args.cafile
     )
-
+    
     run_etl(opts)
+    t2 = datetime.now()
+    print(f'[INFO] 耗時{format_elapsed(t2 - t1)}\n')
 
 if __name__ == "__main__":
     main()
