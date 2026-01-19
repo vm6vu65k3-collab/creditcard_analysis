@@ -2,6 +2,7 @@ import logging
 import pandas as pd 
 from pathlib import Path
 from typing import Sequence
+from datetime import timedelta
 
 logger = logging.getLogger(__name__)
 
@@ -55,3 +56,17 @@ def handling_duplicate_value(df):
     logger.info("重複值處理完成")
     return df
 
+def format_elapsed(td: timedelta) -> str:
+    total_seconds = td.total_seconds()
+    hours = int(total_seconds // 3600)
+    minutes = int(total_seconds % 3600 // 60)
+    seconds = total_seconds % 60 
+    
+    parts = []
+    if hours:
+        parts.append(f"{hours}時")
+    if minutes:
+        parts.append(f"{minutes}分")
+    parts.append(f"{seconds:.3f}秒")
+    
+    return "".join(parts)
