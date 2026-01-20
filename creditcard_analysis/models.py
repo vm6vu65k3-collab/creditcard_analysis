@@ -69,3 +69,11 @@ class TestTable(BaseModel):
     age_level   = Column(String(20), nullable = False, comment = '年齡層')
     trans_count = Column(BigInteger, nullable = False, comment = '交易筆數')
     trans_total = Column(BigInteger, nullable = False, comment = '交易金額')
+    
+    def __repr__(self):
+        return (f"年月：{self.ym} 地區：{self.nation} 產業別：{self.industry} 年齡層：{self.age_level}"
+                f"交易筆數：{self.trans_count} 交易金額：{self.trans_total}")
+
+    # def __str__(self):
+    #     return (f"年月：{self.ym} 地區：{self.nation} 產業別：{self.industry} 年齡層：{self.age_level}"
+    #             f"交易筆數：{self.trans_count} 交易金額：{self.trans_total}")
