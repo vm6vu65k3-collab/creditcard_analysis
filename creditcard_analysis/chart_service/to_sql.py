@@ -53,7 +53,7 @@ def to_db_request(p: ChartIn, result_id: int, cache_hit: bool):
         "cache_hit": cache_hit,
         "result_id": result_id,
     }
-    
+
     
 def record_to_sql(db, payload: ChartIn):
     points: list[ChartPoint] | None = None
