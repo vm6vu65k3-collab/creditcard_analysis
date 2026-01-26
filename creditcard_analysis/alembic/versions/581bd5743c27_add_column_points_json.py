@@ -1,7 +1,7 @@
 """add column-points_json
 
 Revision ID: 581bd5743c27
-Revises: 0401eff841f6
+Revises: 9ef64d4fe7e8
 Create Date: 2025-11-27 16:38:09.801446
 
 """
@@ -13,7 +13,7 @@ from sqlalchemy.dialects import mysql
 
 # revision identifiers, used by Alembic.
 revision: str = '581bd5743c27'
-down_revision: Union[str, Sequence[str], None] = '0401eff841f6'
+down_revision: Union[str, Sequence[str], None] = '9ef64d4fe7e8'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

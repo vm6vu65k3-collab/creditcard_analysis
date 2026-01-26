@@ -1,7 +1,7 @@
 """Add test_table
 
 Revision ID: a987af63aba9
-Revises: 7449021256ba
+Revises: 989f18086f02
 Create Date: 2026-01-07 12:11:42.565876
 
 """
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision: str = 'a987af63aba9'
-down_revision: Union[str, Sequence[str], None] = '7449021256ba'
+down_revision: Union[str, Sequence[str], None] = '989f18086f02'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

@@ -11,6 +11,7 @@ BASE_DIR = Path(__file__).resolve().parents[1]
 STATIC_DIR = BASE_DIR / 'api/static'
 TEMPLATES = BASE_DIR / 'api/templates'
 CHART_STORAGE = BASE_DIR / 'chart_storage'
+CHART_STORAGE.mkdir(exist_ok = True, parents = True)
 
 app = FastAPI()
 templates = Jinja2Templates(directory = str(TEMPLATES))
