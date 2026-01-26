@@ -36,7 +36,7 @@ def upgrade() -> None:
     )
     op.create_index(op.f('ix_chart_results_cache_key'), 'chart_results', ['cache_key'], unique=True)
     op.create_table('clean_data',
-    sa.Column('year_month', sa.String(length=20), nullable=False, comment='年月'),
+    sa.Column('ym', sa.String(length=20), nullable=False, comment='年月'),
     sa.Column('nation', sa.String(length=20), nullable=False, comment='地區'),
     sa.Column('industry', sa.String(length=20), nullable=False, comment='產業別'),
     sa.Column('age_level', sa.String(length=20), nullable=False, comment='年齡層'),
