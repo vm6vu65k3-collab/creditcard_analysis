@@ -52,7 +52,7 @@ cp .env.example .env
 ```
 ### 4. 套用資料庫 Migration
 ```bash
-alembic upgrade head
+alembic -c creditcard_analysis/alembic.ini upgrade head
 ```
 ### 5. 執行ETL流程
 ```bash
@@ -60,7 +60,7 @@ python -m creditcard_analysis.clean_data.clean --source csv_url
 ```
 ### 6. 啟動API Server
 ```bash
-uvicorn creditcard_analysis.main:app --reload
+uvicorn creditcard_analysis.api.main:app --reload
 ```
 ## 入口
 - Swagger UI：http://127.0.0.1:8000/docs
