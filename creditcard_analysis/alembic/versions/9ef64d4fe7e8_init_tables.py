@@ -40,8 +40,8 @@ def upgrade() -> None:
     sa.Column('nation', sa.String(length=20), nullable=False, comment='地區'),
     sa.Column('industry', sa.String(length=20), nullable=False, comment='產業別'),
     sa.Column('age_level', sa.String(length=20), nullable=False, comment='年齡層'),
-    sa.Column('trans_count', sa.Integer(), nullable=False, comment='交易筆數'),
-    sa.Column('trans_total', sa.Integer(), nullable=False, comment='交易金額'),
+    sa.Column('trans_count', sa.BigInteger(), nullable=False, comment='交易筆數'),
+    sa.Column('trans_total', sa.BigInteger(), nullable=False, comment='交易金額'),
     sa.Column('id', sa.Integer(), nullable=False, comment='ID主鍵'),
     sa.PrimaryKeyConstraint('id')
     )
